@@ -46,22 +46,32 @@ year.addEventListener('change', (e) => {
 
 minimo.addEventListener('change', (e) => {
    datosBusqueda.minimo = e.target.value;
+
+   filtrarAuto();
 });
 
 maximo.addEventListener('change', (e) => {
    datosBusqueda.maximo = e.target.value;
+
+   filtrarAuto();
 });
 
 puertas.addEventListener('change', (e) => {
-   datosBusqueda.puertas = e.target.value;
+   datosBusqueda.puertas = parseInt(e.target.value);
+
+   filtrarAuto();
 });
 
 transmision.addEventListener('change', (e) => {
    datosBusqueda.transmision = e.target.value;
+
+   filtrarAuto();
 });
 
 color.addEventListener('change', (e) => {
    datosBusqueda.color = e.target.value;
+
+   filtrarAuto();
 });
 
 // Funciones
@@ -106,10 +116,29 @@ function filtrarAuto() {
    // Se puede filtrar y filtrar otra mas
    // Primero filtramos por la marca, seguidamente filtramos por el año
    // A esto se le conoce como: Optional chaining/ Encadenamiento opcional
-   const resultado = autos.filter(filtrarMarca).filter(filtrarYear);
+   const resultado = autos
+      .filter(filtrarMarca)
+      .filter(filtrarYear)
+      .filter(filtrarMinimo)
+      .filter(filtrarMaximo)
+      .filter(filtrarPuertas)
+      .filter(filtrarTransmision)
+      .filter(filtrarColor);
 
-   // console.log(resultado);
-   mostrarAutos(resultado);
+   if (resultado.length) {
+      mostrarAutos(resultado);
+   } else {
+      noResultado();
+   }
+}
+
+function noResultado() {
+   limpiarHTML();
+
+   const noResultado = document.createElement('div');
+   noResultado.classList.add('alerta', 'error');
+   noResultado.textContent = 'No hay resultados, intenta con otros terminos de búsqueda';
+   resultado.appendChild(noResultado);
 }
 
 // Funcion para filtrar la marca
@@ -141,6 +170,63 @@ function filtrarYear(auto) {
       //   return auto.year === parseInt(year);
       // Ahora... es mejor ponerl parseInt(e.target.value) desde el comienzo en el addEventListener para que esta funcion no tenga mucha logica
       return auto.year === year;
+   }
+
+   return auto;
+}
+
+// Funcion para filtrar el minimo
+function filtrarMinimo(auto) {
+   const { minimo } = datosBusqueda;
+
+   if (minimo) {
+      // Quiero que me traiga solo los mayor o igual al precio minimo que le estoy pidiendo
+      return auto.precio >= minimo;
+   }
+
+   return auto;
+}
+
+// Funcion para filtrar el maximo
+function filtrarMaximo(auto) {
+   const { maximo } = datosBusqueda;
+
+   if (maximo) {
+      // Quiero que me traiga solo los menor o igual al precio minimo que le estoy pidiendo
+      return auto.precio <= maximo;
+   }
+
+   return auto;
+}
+
+// Funcion para filtrar Puertas
+function filtrarPuertas(auto) {
+   const { puertas } = datosBusqueda;
+
+   if (puertas) {
+      return auto.puertas === puertas;
+   }
+
+   return auto;
+}
+
+// Funcion para filtrar Transmision
+function filtrarTransmision(auto) {
+   const { transmision } = datosBusqueda;
+
+   if (transmision) {
+      return auto.transmision === transmision;
+   }
+
+   return auto;
+}
+
+// Funcion para filtrar color de auto
+function filtrarColor(auto) {
+   const { color } = datosBusqueda;
+
+   if (color) {
+      return auto.color === color;
    }
 
    return auto;
