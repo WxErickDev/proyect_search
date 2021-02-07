@@ -25,7 +25,7 @@ const datosBusqueda = {
 
 // Eventos
 document.addEventListener('DOMContentLoaded', () => {
-   mostrarAutos(); // Muestra los automoviles
+   mostrarAutos(autos); // Muestra los automoviles
 
    // Llena las opciones de años
    llenarSelect();
@@ -65,7 +65,9 @@ color.addEventListener('change', (e) => {
 });
 
 // Funciones
-function mostrarAutos() {
+function mostrarAutos(autos) {
+   limpiarHTML(); // Elimina el HTML previo
+
    autos.forEach((auto) => {
       const { marca, modelo, year, puertas, transmision, precio, color } = auto;
 
@@ -78,6 +80,13 @@ function mostrarAutos() {
       // insertar en el HTML
       resultado.appendChild(autoHTML);
    });
+}
+
+// limpiar HTML
+function limpiarHTML() {
+   while (resultado.firstChild) {
+      resultado.removeChild(resultado.firstChild);
+   }
 }
 
 // Genera los años del select
@@ -99,7 +108,8 @@ function filtrarAuto() {
    // A esto se le conoce como: Optional chaining/ Encadenamiento opcional
    const resultado = autos.filter(filtrarMarca).filter(filtrarYear);
 
-   console.log(resultado);
+   // console.log(resultado);
+   mostrarAutos(resultado);
 }
 
 // Funcion para filtrar la marca
