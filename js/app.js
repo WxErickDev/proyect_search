@@ -39,7 +39,9 @@ marca.addEventListener('change', (e) => {
 });
 
 year.addEventListener('change', (e) => {
-   datosBusqueda.year = e.target.value;
+   datosBusqueda.year = parseInt(e.target.value);
+
+   filtrarAuto();
 });
 
 minimo.addEventListener('change', (e) => {
@@ -92,11 +94,15 @@ function llenarSelect() {
 
 // Funcion que filtra en base a la busqueda
 function filtrarAuto() {
-   const resultado = autos.filter(filtrarMarca);
+   // Se puede filtrar y filtrar otra mas
+   // Primero filtramos por la marca, seguidamente filtramos por el año
+   // A esto se le conoce como: Optional chaining/ Encadenamiento opcional
+   const resultado = autos.filter(filtrarMarca).filter(filtrarYear);
 
    console.log(resultado);
 }
 
+// Funcion para filtrar la marca
 function filtrarMarca(auto) {
    /*  Muestra la iteracion de db.js -> el objeto autos
    console.log(auto); */
@@ -108,6 +114,24 @@ function filtrarMarca(auto) {
       return auto.marca === marca;
    }
 
-   // Si no selecciono nada en autos, quiero que me muestre todo
+   // Si no selecciono nada en autos, me traigo todo de regreso
+   return auto;
+}
+
+// Funcion para filtrar el año
+function filtrarYear(auto) {
+   const { year } = datosBusqueda;
+
+   /*   Para darnos a conocer que un select>option nos da siempre un string y que en el objeto autos, el año esta como numero
+   console.log(typeof year);
+   console.log(typeof auto.year); */
+
+   if (year) {
+      // Es por ello que debemos convertir year a numero
+      //   return auto.year === parseInt(year);
+      // Ahora... es mejor ponerl parseInt(e.target.value) desde el comienzo en el addEventListener para que esta funcion no tenga mucha logica
+      return auto.year === year;
+   }
+
    return auto;
 }
